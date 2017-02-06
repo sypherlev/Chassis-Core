@@ -1,0 +1,36 @@
+{
+  "description": "Chassis Core 1.0",
+  "name": "sypherlev/chassis-core",
+  "type": "project",
+  "homepage": "https://github.com/sypherlev/Chassis-Core",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Chassis\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.0",
+    "nikic/fast-route": "^1.0",
+    "vlucas/phpdotenv": "^2.2",
+    "sypherlev/blueprint": "~1.0",
+    "phpmailer/phpmailer": "~5.2",
+    "twig/twig": "~1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.7.*",
+    "pds/skeleton": "~1.0"
+  },
+  "config": {
+    "bin-dir": "bin"
+  },
+  "bin": [
+    "bin/chassis"
+  ],
+  "authors": [
+    {
+      "name": "Claire Ryan",
+      "email": "claire@raynfall.com"
+    }
+  ]
+}
