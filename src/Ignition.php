@@ -2,17 +2,18 @@
 
 namespace Chassis;
 
-use App\RouteCollection;
 use Chassis\Action\ActionInterface;
+use Chassis\Middleware\Collection;
 use Chassis\Request\CliRequest;
 use Chassis\Request\WebRequest;
+use League\Container\Container;
 
 class Ignition
 {
     /** @var ActionInterface */
     protected $action;
 
-    public function run()
+    public function run(Router $router = null, Container $container = null, Collection $middleware = null)
     {
         if (php_sapi_name() == "cli") {
             // In cli-mode; setup CLI Request and go to CLI action
@@ -24,7 +25,7 @@ class Ignition
                 $actionname = $possiblemethod[0];
                 $methodname = $possiblemethod[1];
             }
-            $this->action = new $actionname($request);
+            $this->action = new $actionname($request, $container, $middleware);
             $this->action->setup($methodname);
             if ($methodname != null && $this->action->isExecutable()) {
                 $this->action->execute();
@@ -38,7 +39,10 @@ class Ignition
                 header("Location: $secureredirect");
                 exit;
             }
-            $router = new RouteCollection();
+            if($router == null) {
+                http_response_code(500);
+                die('500 Internal server error: Application router is not available.');
+            }
             $router->readyDispatcher();
             $response = $router->trigger();
             if (is_null($response)) {
@@ -51,7 +55,7 @@ class Ignition
             }
             if (!isset($response->action)) {
                 http_response_code(500);
-                die('500 Internal server error.');
+                die('500 Internal server error: Application action not found.');
             }
             $request = new WebRequest();
             if(!empty($response->segments)) {
@@ -64,7 +68,7 @@ class Ignition
                 $actionname = $possiblemethod[0];
                 $methodname = $possiblemethod[1];
             }
-            $this->action = new $actionname($request);
+            $this->action = new $actionname($request, $container, $middleware);
             $this->action->setup($methodname);
             if ($methodname != null && $this->action->isExecutable()) {
                 $this->action->execute();
