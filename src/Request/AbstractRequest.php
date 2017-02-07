@@ -35,20 +35,4 @@ abstract class AbstractRequest implements RequestInterface
             throw(new \Exception("Can't get $name: Data named $name not found in Request Object"));
         }
     }
-
-    public function transform($name, $data)
-    {
-        if(isset($this->requestdata[$name])) {
-            if(gettype($data == gettype($this->requestdata[$name]))) {
-                $this->requestdata[$name] = $data;
-            }
-            else {
-                throw(new \Exception("Can't transform $name: Type mismatch between new and old data"));
-            }
-        }
-        else {
-            throw(new \Exception("Can't transform $name: Data named $name not found in Request Object"));
-        }
-        return true;
-    }
 }
