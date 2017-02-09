@@ -16,6 +16,7 @@ abstract class AbstractAction implements ActionInterface
 
     public function execute()
     {
+        $this->init();
         if(!empty($this->methodname) && method_exists($this, $this->methodname)) {
             $this->{$this->methodname}();
         }
@@ -34,5 +35,9 @@ abstract class AbstractAction implements ActionInterface
     public function enableExecution()
     {
         $this->executable = true;
+    }
+
+    public function init() {
+
     }
 }

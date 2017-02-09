@@ -12,4 +12,5 @@ interface ActionInterface
     public function enableExecution();
     public function execute();
     public function getRequest();
+    public function init();
 }
