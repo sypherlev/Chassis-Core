@@ -13,7 +13,7 @@ class Ignition
     /** @var ActionInterface */
     protected $action;
 
-    public function run(Router $router = null, Container $container = null, Collection $middleware = null)
+    public function run(Router $router = null, Collection $middleware = null)
     {
         if (php_sapi_name() == "cli") {
             // In cli-mode; setup CLI Request and go to CLI action
@@ -25,7 +25,7 @@ class Ignition
                 $actionname = $possiblemethod[0];
                 $methodname = $possiblemethod[1];
             }
-            $this->action = new $actionname($request, $container, $middleware);
+            $this->action = new $actionname($request, $middleware);
             $this->action->setup($methodname);
             if ($methodname != null && $this->action->isExecutable()) {
                 $this->action->execute();
@@ -68,7 +68,7 @@ class Ignition
                 $actionname = $possiblemethod[0];
                 $methodname = $possiblemethod[1];
             }
-            $this->action = new $actionname($request, $container, $middleware);
+            $this->action = new $actionname($request, $middleware);
             $this->action->setup($methodname);
             if ($methodname != null && $this->action->isExecutable()) {
                 $this->action->execute();
