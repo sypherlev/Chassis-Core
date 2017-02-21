@@ -1,9 +1,9 @@
 <?php
 
-namespace Chassis\Action;
+namespace SypherLev\Chassis\Action;
 
-use Chassis\Middleware\Collection;
-use Chassis\Request\WebRequest;
+use SypherLev\Chassis\Middleware\Collection;
+use SypherLev\Chassis\Request\WebRequest;
 
 class WebAction extends AbstractAction
 {

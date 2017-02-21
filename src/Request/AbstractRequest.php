@@ -1,6 +1,6 @@
 <?php
 
-namespace Chassis\Request;
+namespace SypherLev\Chassis\Request;
 
 
 abstract class AbstractRequest implements RequestInterface

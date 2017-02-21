@@ -1,8 +1,8 @@
 <?php
 
-namespace Chassis\Action;
+namespace SypherLev\Chassis\Action;
 
-use Chassis\Response\ResponseInterface;
+use SypherLev\Chassis\Response\ResponseInterface;
 
 interface ActionInterface
 {

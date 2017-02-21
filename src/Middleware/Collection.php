@@ -1,6 +1,6 @@
 <?php
 
-namespace Chassis\Middleware;
+namespace SypherLev\Chassis\Middleware;
 
 class Collection
 {

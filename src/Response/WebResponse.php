@@ -1,6 +1,6 @@
 <?php
 
-namespace Chassis\Response;
+namespace SypherLev\Chassis\Response;
 
 class WebResponse implements ResponseInterface
 {

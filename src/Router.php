@@ -1,6 +1,6 @@
 <?php
 
-namespace Chassis;
+namespace SypherLev\Chassis;
 
 use FastRoute;
 

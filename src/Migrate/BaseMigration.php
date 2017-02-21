@@ -1,6 +1,6 @@
 <?php
 
-namespace Chassis\Migrate;
+namespace SypherLev\Chassis\Migrate;
 
 use SypherLev\Blueprint\Blueprint;
 use SypherLev\Blueprint\QueryBuilders\SourceInterface;

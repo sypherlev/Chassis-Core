@@ -1,6 +1,6 @@
 <?php
 
-namespace Chassis\Data;
+namespace SypherLev\Chassis\Data;
 
 use SypherLev\Blueprint\QueryBuilders\MySql\MySqlSource;
 

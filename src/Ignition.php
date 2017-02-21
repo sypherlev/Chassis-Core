@@ -1,11 +1,11 @@
 <?php
 
-namespace Chassis;
+namespace SypherLev\Chassis;
 
-use Chassis\Action\ActionInterface;
-use Chassis\Middleware\Collection;
-use Chassis\Request\CliRequest;
-use Chassis\Request\WebRequest;
+use SypherLev\Chassis\Action\ActionInterface;
+use SypherLev\Chassis\Middleware\Collection;
+use SypherLev\Chassis\Request\CliRequest;
+use SypherLev\Chassis\Request\WebRequest;
 use League\Container\Container;
 
 class Ignition

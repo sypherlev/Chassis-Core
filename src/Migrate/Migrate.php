@@ -1,11 +1,11 @@
 <?php
 
-namespace Chassis\Migrate;
+namespace SypherLev\Chassis\Migrate;
 
-use Chassis\Action\CliAction;
-use Chassis\Data\SourceBootstrapper;
-use Chassis\Request\CliRequest;
-use Chassis\Response\CliResponse;
+use SypherLev\Chassis\Action\CliAction;
+use SypherLev\Chassis\Data\SourceBootstrapper;
+use SypherLev\Chassis\Request\CliRequest;
+use SypherLev\Chassis\Response\CliResponse;
 
 class Migrate extends CliAction
 {
