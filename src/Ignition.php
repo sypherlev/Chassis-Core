@@ -2,11 +2,10 @@
 
 namespace SypherLev\Chassis;
 
+use SypherLev\Chassis\Request\Cli;
+use SypherLev\Chassis\Request\Web;
 use SypherLev\Chassis\Action\ActionInterface;
 use SypherLev\Chassis\Middleware\Collection;
-use SypherLev\Chassis\Request\CliRequest;
-use SypherLev\Chassis\Request\WebRequest;
-use League\Container\Container;
 
 class Ignition
 {
@@ -17,7 +16,7 @@ class Ignition
     {
         if (php_sapi_name() == "cli") {
             // In cli-mode; setup CLI Request and go to CLI action
-            $request = new CliRequest();
+            $request = new Cli();
             $methodname = null;
             $actionname = $request->getAction();
             $possiblemethod = explode(':', $actionname);
@@ -44,24 +43,24 @@ class Ignition
                 die('500 Internal server error: Application router is not available.');
             }
             $router->readyDispatcher();
-            $response = $router->trigger();
-            if (is_null($response)) {
+            $route = $router->trigger();
+            if (is_null($route)) {
                 http_response_code(404);
                 die('404 Page not found.');
             }
-            if ($response === false) {
+            if ($route === false) {
                 http_response_code(405);
                 die('405 HTTP method not allowed.');
             }
-            if (!isset($response->action)) {
+            if (!isset($route->action)) {
                 http_response_code(500);
                 die('500 Internal server error: Application action not found.');
             }
-            $request = new WebRequest();
-            if(!empty($response->segments)) {
-                $request->setSegmentData($response->segments);
+            $request = new Web();
+            if(!empty($route->segments)) {
+                $request->setSegmentData($route->segments);
             }
-            $actionname = $response->action;
+            $actionname = $route->action;
             $methodname = null;
             $possiblemethod = explode(':', $actionname);
             if (count($possiblemethod) > 1) {
