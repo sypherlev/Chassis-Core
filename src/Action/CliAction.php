@@ -3,14 +3,14 @@
 namespace SypherLev\Chassis\Action;
 
 use SypherLev\Chassis\Middleware\Collection;
-use SypherLev\Chassis\Request\CliRequest;
+use SypherLev\Chassis\Request\Cli;
 
 class CliAction extends AbstractAction
 {
     private $request;
     private $middleware;
 
-    public function __construct(CliRequest $request, Collection $middleware)
+    public function __construct(Cli $request, Collection $middleware)
     {
         $this->request = $request;
         $this->middleware = $middleware;
