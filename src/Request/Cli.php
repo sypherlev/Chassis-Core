@@ -5,6 +5,7 @@ namespace SypherLev\Chassis\Request;
 class Cli
 {
     use WithEnvironmentVars;
+    use WithMiddlewareVars;
 
     private $requestdata;
 
@@ -12,20 +13,6 @@ class Cli
     {
         $this->setLineVars();
         $this->setEnvironmentVars();
-    }
-
-    public function setLineVars() {
-        global $argv;
-        if(is_array($argv)) {
-            $scriptname = array_shift($argv);
-            $action = array_shift($argv);
-            $this->insertData('scriptname', $scriptname);
-            $this->insertData('action', $action);
-            $this->insertData('argv', $argv);
-        }
-        else {
-            throw(new \Exception("Can't initialize action: CLI arguments missing"));
-        }
     }
 
     public function getScriptName() {
@@ -40,7 +27,7 @@ class Cli
         return $this->getRawData('argv');
     }
 
-    public function getVarByPosition($int) {
+    public function fromLineVars($int) {
         if(count($this->requestdata['argv']) > $int) {
             $count = 0;
             foreach($this->requestdata['argv'] as $value) {
@@ -51,6 +38,20 @@ class Cli
             }
         }
         return null;
+    }
+
+    private function setLineVars() {
+        global $argv;
+        if(is_array($argv)) {
+            $scriptname = array_shift($argv);
+            $action = array_shift($argv);
+            $this->insertData('scriptname', $scriptname);
+            $this->insertData('action', $action);
+            $this->insertData('argv', $argv);
+        }
+        else {
+            throw(new \Exception("Can't initialize action: CLI arguments missing"));
+        }
     }
 
     private function insertData($name, $input)
