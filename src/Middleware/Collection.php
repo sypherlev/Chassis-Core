@@ -6,7 +6,7 @@ class Collection
 {
     private $queues = [];
 
-    public function run($queueName, Entity $input) {
+    public function run($queueName, $input) {
         if(isset($this->queues[$queueName])) {
             $newQueue = clone $this->queues[$queueName];
             return $newQueue->runQueue($input);
@@ -14,7 +14,7 @@ class Collection
         return $input;
     }
 
-    public function loadQueue($label, Process $process) {
+    public function loadQueue($label, $process) {
         $this->queues[$label] = $process;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace SypherLev\Chassis\Middleware;
 
+use SypherLev\Chassis\Request\Web;
+
 class WebProcess
 {
     private $stack = [];
@@ -13,7 +15,7 @@ class WebProcess
 
     // based on the Symfony HttpFoundation Middleware
     // see https://gist.github.com/odan/b871f0a1f1dbd21165f6a35649ac532e
-    public function runQueue(Entity $input)
+    public function runQueue(Web $input)
     {
         $runner = function ($input) use (&$runner) {
             $middleware = array_shift($this->stack);
