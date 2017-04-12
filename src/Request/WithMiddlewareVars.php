@@ -30,7 +30,7 @@ trait WithMiddlewareVars
     }
 
     public function getMiddlewareVar($name) {
-        if (!isset($this->vars[$name])) {
+        if (isset($this->vars[$name])) {
             return $this->vars[$name];
         } else {
             return null;
