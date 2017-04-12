@@ -2,7 +2,7 @@
 
 namespace SypherLev\Chassis\Middleware;
 
-class Process
+class WebProcess
 {
     private $stack = [];
 

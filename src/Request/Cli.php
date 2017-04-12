@@ -2,9 +2,12 @@
 
 namespace SypherLev\Chassis\Request;
 
-
-class CliRequest extends AbstractRequest
+class Cli
 {
+    use WithEnvironmentVars;
+
+    private $requestdata;
+
     public function __construct()
     {
         $this->setLineVars();
@@ -48,5 +51,20 @@ class CliRequest extends AbstractRequest
             }
         }
         return null;
+    }
+
+    private function insertData($name, $input)
+    {
+        $this->requestdata[$name] = $input;
+    }
+
+    private function getRawData($name)
+    {
+        if(isset($this->requestdata[$name])) {
+            return $this->requestdata[$name];
+        }
+        else {
+            return null;
+        }
     }
 }
