@@ -1,15 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: claireryan
- * Date: 2017-04-10
- * Time: 2:03 PM
- */
 
-namespace Chassis\Request;
+namespace SypherLev\Chassis\Request;
 
-
-class WithEnvironmentVars
+trait WithEnvironmentVars
 {
+    private $env_data;
 
+    private function setEnvironmentVars() {
+        $this->env_data = $_ENV;
+    }
+
+    public function fromEnvironment($name) {
+        if(isset($this->env_data[$name])) {
+            return $this->env_data[$name];
+        }
+        else {
+            return null;
+        }
+    }
 }
