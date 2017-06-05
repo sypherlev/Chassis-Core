@@ -23,7 +23,14 @@ class Web
         $this->request = ServerRequest::fromGlobals();
         $this->getparams = $this->request->getQueryParams();
         $this->cookieparams = $this->request->getCookieParams();
-        $this->bodyparams = $this->request->getParsedBody();
+        $bodyparams = $this->request->getParsedBody();
+        $phpinput = json_decode($this->request->getBody()->getContents(), true);
+        if(is_array($phpinput)) {
+            $this->bodyparams = array_merge($bodyparams, $phpinput);
+        }
+        else {
+            $this->bodyparams = $bodyparams;
+        }
         $this->parsedfiles = $this->request->getUploadedFiles();
 
         $this->setEnvironmentVars();
