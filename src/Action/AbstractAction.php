@@ -11,12 +11,12 @@ abstract class AbstractAction implements ActionInterface
 
     public function setup($methodname)
     {
+        $this->init();
         $this->methodname = $methodname;
     }
 
     public function execute()
     {
-        $this->init();
         if(!empty($this->methodname) && method_exists($this, $this->methodname)) {
             $this->{$this->methodname}();
         }
