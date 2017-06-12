@@ -16,6 +16,7 @@ class Web
     private $bodyparams = [];
     private $cookieparams = [];
     private $parsedfiles = [];
+    private $placeholders = [];
 
 
     public function __construct()
@@ -44,9 +45,20 @@ class Web
         $this->urlSegments = $segments;
     }
 
+    public function setPlaceholderData($placeolders) {
+        $this->placeholders = $placeolders;
+    }
+
     public function fromSegments($position) {
         if(count($this->urlSegments) > $position) {
             return $this->urlSegments[$position];
+        }
+        return null;
+    }
+
+    public function fromPlaceholders($name) {
+        if(isset($this->placeholders[$name])) {
+            return $this->placeholders[$name];
         }
         return null;
     }
@@ -72,9 +84,9 @@ class Web
         return null;
     }
 
-    public function fromFiles($name) {
-        if(isset($this->parsedfiles[$name])) {
-            return $this->parsedfiles[$name];
+    public function fromFileStack() {
+        if(count($this->parsedfiles) > 0) {
+            return array_shift($this->parsedfiles);
         }
         return null;
     }

@@ -42,6 +42,7 @@ class Router
                 $ready = new \stdClass();
                 $ready->action = $routeInfo[1];
                 $ready->segments = explode('/', ltrim($uri, '/'));
+                $ready->placeholders = $routeInfo[2];
                 break;
         }
         return $ready;

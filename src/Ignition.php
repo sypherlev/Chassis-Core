@@ -60,6 +60,9 @@ class Ignition
             if(!empty($route->segments)) {
                 $request->setSegmentData($route->segments);
             }
+            if(!empty($route->placeholders)) {
+                $request->setPlaceholderData($route->placeholders);
+            }
             $actionname = $route->action;
             $methodname = null;
             $possiblemethod = explode(':', $actionname);
