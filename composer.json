@@ -13,7 +13,7 @@
     "php": ">=7.0",
     "nikic/fast-route": "^1.0",
     "vlucas/phpdotenv": "^2.2",
-    "sypherlev/blueprint": "~1.0",
+    "sypherlev/blueprint": "@dev",
     "phpmailer/phpmailer": "~5.2",
     "twig/twig": "~1.0",
     "league/container": "~2.2",
