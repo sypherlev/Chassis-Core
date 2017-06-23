@@ -21,7 +21,7 @@ if [ $1 = "-b" ]; then
         echo "Missing database prefix - please specify a database prefix from the .env file"
         exit 0
     fi
-    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate:backup" $2)
+    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate\\Migrate:backup" $2)
     echo "$output"
     exit 0
 fi
@@ -30,7 +30,7 @@ if [ $1 = "-m" ]; then
         echo "Missing database prefix - please specify a database prefix from the .env file"
         exit 0
     fi
-    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate:migrateUnapplied" $2)
+    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate\\Migrate:migrateUnapplied" $2)
     echo "$output"
     exit 0
 fi
@@ -43,7 +43,7 @@ if [ $1 = "-c" ]; then
         echo "Missing migration name - please specify a name using only (A-Za-z_0-9)"
         exit 0
     fi
-    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate:createMigration" $2 $3)
+    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate\\Migrate:createMigration" $2 $3)
     echo "$output"
     exit 0
 fi
@@ -56,7 +56,7 @@ if [ $1 = "-s" ]; then
         echo "Missing bootstrap file - please specify a file within the migrations folder"
         exit 0
     fi
-    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate:bootstrap" $2 $3)
+    output=$($chphpexe public/index.php "SypherLev\\Chassis\\Migrate\\Migrate:bootstrap" $2 $3)
     echo "$output"
     exit 0
 fi
