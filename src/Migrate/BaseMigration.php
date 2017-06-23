@@ -3,6 +3,7 @@
 namespace SypherLev\Chassis\Migrate;
 
 use SypherLev\Blueprint\Blueprint;
+use SypherLev\Blueprint\QueryBuilders\QueryInterface;
 use SypherLev\Blueprint\QueryBuilders\SourceInterface;
 
 class BaseMigration extends Blueprint
@@ -13,8 +14,8 @@ class BaseMigration extends Blueprint
     private $db;
     private $dbhost;
 
-    public function __construct(SourceInterface $source) {
-        parent::__construct($source);
+    public function __construct(SourceInterface $source, QueryInterface $query) {
+        parent::__construct($source, $query);
     }
 
     public function setRawDatabaseParams($driver, $user, $pass, $db, $host) {

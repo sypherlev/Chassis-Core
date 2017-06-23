@@ -2,9 +2,11 @@
 
 namespace SypherLev\Chassis\Migrate;
 
+use SypherLev\Blueprint\QueryBuilders\MySql\MySqlQuery;
 use SypherLev\Chassis\Action\CliAction;
 use SypherLev\Chassis\Data\SourceBootstrapper;
-use SypherLev\Chassis\Request\CliRequest;
+use SypherLev\Chassis\Middleware\Collection;
+use SypherLev\Chassis\Request\Cli;
 use SypherLev\Chassis\Response\CliResponse;
 
 class Migrate extends CliAction
@@ -14,17 +16,17 @@ class Migrate extends CliAction
     private $database;
     private $cliresponse;
 
-    public function __construct(CliRequest $request)
+    public function __construct(Cli $request)
     {
-        parent::__construct($request);
-        $this->database = $this->getRequest()->getVarByPosition(0);
+        parent::__construct($request, new Collection());
+        $this->database = $this->getRequest()->fromLineVars(0);
         $this->cliresponse = new CliResponse();
     }
 
     public function bootstrap() {
         try {
             $this->setupMigrationHandler();
-            $check = $this->migrationhandler->bootstrap($this->getRequest()->getVarByPosition(1));
+            $check = $this->migrationhandler->bootstrap($this->getRequest()->fromLineVars(1));
         }
         catch (\Exception $e) {
             var_dump($e);
@@ -66,7 +68,7 @@ class Migrate extends CliAction
     public function createMigration() {
         try {
             $this->setupMigrationHandler();
-            $check = $this->migrationhandler->create($this->getRequest()->getVarByPosition(1));
+            $check = $this->migrationhandler->create($this->getRequest()->fromLineVars(1));
         }
         catch (\Exception $e) {
             var_dump($e);
@@ -111,7 +113,7 @@ class Migrate extends CliAction
     private function setupMigrationHandler() {
         $bootstrapper = new SourceBootstrapper();
         $source = $bootstrapper->generateSource($this->database);
-        $this->migrationhandler = new BaseMigration($source);
+        $this->migrationhandler = new BaseMigration($source, new MySqlQuery());
         $this->migrationhandler->setRawDatabaseParams(
             $bootstrapper->driver,
             $bootstrapper->user,
