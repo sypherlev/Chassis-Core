@@ -11,6 +11,7 @@ class EmailResponse
     private $message;
     private $devMode = true;
     private $mailer;
+    private $isHTML = true;
 
     public function __construct()
     {
@@ -18,8 +19,6 @@ class EmailResponse
             $this->setDevMode(false);
         }
         $this->mailer = $mailer = new \PHPMailer();
-        $this->mailer->isSendmail();
-        $this->mailer->isHTML(true);
     }
 
     protected function attachFile($filepath, $name = '')
@@ -56,6 +55,13 @@ class EmailResponse
             }
         }
         else {
+            if($this->isHTML) {
+                $this->mailer->isHTML(true);
+            }
+            else {
+                $this->mailer->isHTML(false);
+            }
+            $this->mailer->isSendmail();
             $this->mailer->Subject = $this->subject;
             $this->mailer->Body = $this->message;
             $output = $this->mailer->send();
@@ -74,7 +80,7 @@ class EmailResponse
     }
 
     public function sendPlainText() {
-        $this->mailer->isHTML(false);
+        $this->isHTML = false;
     }
 
     protected function setDevMode($switch = true) {
