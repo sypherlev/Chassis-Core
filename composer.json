@@ -16,8 +16,7 @@
     "sypherlev/blueprint": "@dev",
     "phpmailer/phpmailer": "~5.2",
     "twig/twig": "~1.0",
-    "league/container": "~2.2",
-    "guzzlehttp/psr7": "~1.4"
+    "league/container": "~2.2"
   },
   "require-dev": {
     "phpunit/phpunit": "5.7.*",

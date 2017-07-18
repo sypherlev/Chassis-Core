@@ -2,14 +2,10 @@
 
 namespace SypherLev\Chassis\Request;
 
-use GuzzleHttp\Psr7\ServerRequest;
-
 class Web
 {
     use WithEnvironmentVars;
     use WithMiddlewareVars;
-
-    private $request;
 
     private $urlSegments = [];
     private $getparams = [];
@@ -21,24 +17,18 @@ class Web
 
     public function __construct()
     {
-        $this->request = ServerRequest::fromGlobals();
-        $this->getparams = $this->request->getQueryParams();
-        $this->cookieparams = $this->request->getCookieParams();
-        $bodyparams = $this->request->getParsedBody();
-        $phpinput = json_decode($this->request->getBody()->getContents(), true);
+        $this->getparams = $_GET;
+        $this->cookieparams = $_COOKIE;
+        $bodyparams = $_POST;
+        $phpinput = json_decode(file_get_contents('php://input'), true);
         if(is_array($phpinput)) {
             $this->bodyparams = array_merge($bodyparams, $phpinput);
         }
         else {
             $this->bodyparams = $bodyparams;
         }
-        $this->parsedfiles = $this->request->getUploadedFiles();
-
+        $this->parsedfiles = $this->parseFiles();
         $this->setEnvironmentVars();
-    }
-
-    public function getPSR7Request() {
-        return $this->request;
     }
 
     public function setSegmentData($segments) {
@@ -89,5 +79,15 @@ class Web
             return array_shift($this->parsedfiles);
         }
         return null;
+    }
+
+    private function parseFiles() {
+        $files = array();
+        foreach ($_FILES['files']['name'] as $num_key => $dummy) {
+            foreach ($_FILES['files'] as $txt_key => $dummy) {
+                $files[$num_key][$txt_key] = $_FILES['files'][$txt_key][$num_key];
+            }
+        }
+        return $files;
     }
 }
