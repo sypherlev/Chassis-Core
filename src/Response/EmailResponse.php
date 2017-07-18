@@ -19,6 +19,7 @@ class EmailResponse
         }
         $this->mailer = $mailer = new \PHPMailer();
         $this->mailer->isSendmail();
+        $this->mailer->isHTML(true);
     }
 
     protected function attachFile($filepath, $name = '')
@@ -70,6 +71,10 @@ class EmailResponse
         $this->emailfrom = $emailfrom;
         $this->message = $message;
         $this->subject = $subject;
+    }
+
+    public function sendPlainText() {
+        $this->mailer->isHTML(false);
     }
 
     protected function setDevMode($switch = true) {
