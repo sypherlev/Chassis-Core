@@ -26,7 +26,7 @@ class Web
         } else {
             $this->bodyparams = $bodyparams;
         }
-        $this->parsedfiles = $this->parseFiles();
+        $this->parsedfiles = $_FILES;
         $this->setEnvironmentVars();
     }
 
@@ -80,24 +80,11 @@ class Web
         return null;
     }
 
-    public function fromFileStack()
+    public function fromFiles($name)
     {
-        if (count($this->parsedfiles) > 0) {
-            return array_shift($this->parsedfiles);
+        if (isset($this->parsedfiles[$name])) {
+            return $this->parsedfiles[$name];
         }
         return null;
-    }
-
-    private function parseFiles()
-    {
-        $files = array();
-        if (!empty($_FILES)) {
-            foreach ($_FILES['files']['name'] as $num_key => $dummy) {
-                foreach ($_FILES['files'] as $txt_key => $dummy) {
-                    $files[$num_key][$txt_key] = $_FILES['files'][$txt_key][$num_key];
-                }
-            }
-        }
-        return $files;
     }
 }
