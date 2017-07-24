@@ -11,6 +11,12 @@ class WebResponse implements ResponseInterface
         $this->template = $template;
     }
 
+    public function insertBatchData(Array $batch) {
+        foreach ($batch as $idx => $val) {
+            $this->insertOutputData($idx, $val);
+        }
+    }
+
     public function insertOutputData($label, $data)
     {
         $this->data[$label] = $data;

@@ -15,6 +15,12 @@ trait WithMiddlewareVars
         }
     }
 
+    public function addMiddlewareVarBatch(Array $batch) {
+        foreach ($batch as $idx => $val) {
+            $this->addMiddlewareVar($idx, $val);
+        }
+    }
+
     public function overwriteMiddlewareVar($name, $var)
     {
         $this->vars[$name] = $var;
