@@ -61,7 +61,6 @@ class EmailResponse
             else {
                 $this->mailer->isHTML(false);
             }
-            $this->mailer->isSendmail();
             $this->mailer->Subject = $this->subject;
             $this->mailer->Body = $this->message;
             $output = $this->mailer->send();
