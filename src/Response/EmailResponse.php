@@ -65,10 +65,10 @@ class EmailResponse
             $this->mailer->Subject = $this->subject;
             $this->mailer->Body = $this->message;
             $output = $this->mailer->send();
-            $this->mailer = new \PHPMailer();
             if(!$output) {
                 throw (new \Exception($this->mailer->ErrorInfo));
             }
+            $this->mailer = new \PHPMailer();
         }
     }
 
