@@ -34,7 +34,15 @@ class EmailResponse
     protected function out()
     {
         $this->mailer->setFrom($this->emailfrom);
-        $this->mailer->addAddress($this->emailto);
+        if(strpos($this->emailto, ',') !== false) {
+            $emails = explode(',', $this->emailto);
+            foreach ($emails as $mail) {
+                $this->mailer->addAddress($mail);
+            }
+        }
+        else {
+            $this->mailer->addAddress($this->emailto);
+        }
         if($this->devMode) {
             $timestamp = time();
             $folder = '..'. DIRECTORY_SEPARATOR . 'emails';
