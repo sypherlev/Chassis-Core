@@ -82,7 +82,13 @@ class BaseMigration extends Blueprint
     }
 
     public function backup() {
-        return $this->runBackup();
+        $output = $this->runBackup();
+        if(strlen($output) > 0) { // then something happened, check back
+            return $output;
+        }
+        else { // then it executed without errors
+            return true;
+        }
     }
 
     public function migrate() {
@@ -169,13 +175,19 @@ class BaseMigration extends Blueprint
     }
 
     private function runBackup() {
-        $folder = "../databackups";
+        $folder = "databackups";
         if(!file_exists($folder)) {
             mkdir($folder, 0755);
         }
+
+        $dumpcommand = "mysqldump -u{$this->dbuser} -p{$this->dbpass} -h {$this->dbhost} -x {$this->db} | gzip > ";
+
+        if($this->driver == 'pgsql') {
+            $dumpcommand = "pg_dump -u{$this->dbuser} -p{$this->dbpass} -h {$this->dbhost} -x {$this->db} | gzip > ";
+        }
+
         $filename = "{$this->db}-backup-".date('Y-m-d--H-i-s', time()).".sql.gz";
-        $command = "mysqldump -u{$this->dbuser} -p{$this->dbpass} "
-            . "-h {$this->dbhost} -D {$this->db} | gzip > ".$folder.'/'.$filename;
-        return shell_exec($command);
+        $dumpcommand .= $folder.'/'.$filename;
+        return shell_exec($dumpcommand);
     }
 }

@@ -54,13 +54,10 @@ class Migrate extends CliAction
             $check = false;
         }
         if($check) {
-            $this->cliresponse->setOutputMessage('Bootstrap output');
-            foreach ($check as $idx => $m) {
-                $this->cliresponse->insertOutputData($idx, $m);
-            }
+            $this->cliresponse->setOutputMessage('Backup output stored in /databackups');
         }
         else {
-            $this->cliresponse->setOutputMessage('Error: bootstrap failure, no filename specified or file not found');
+            $this->cliresponse->setOutputMessage('Error: backup failure, backup not complete');
         }
         $this->cliresponse->out();
     }
