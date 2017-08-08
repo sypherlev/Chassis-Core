@@ -33,6 +33,10 @@ class Ignition
         } else {
             // Not in cli-mode; divert to the router
             // initial check for whether to redirect to secure page
+            if (!isset($_SERVER['HTTP_HOST'])) {
+                // do not support requests without a host
+                die;
+            }
             if(isset($_ENV['alwaysssl']) && $_ENV['alwaysssl'] === 'true' && !$this->isSecure()) {
                 $secureredirect = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 header("Location: $secureredirect");
