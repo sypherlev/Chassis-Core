@@ -22,7 +22,11 @@ class SourceBootstrapper
         $this->sanitizer_regex = isset($_ENV[$identifier.'_sanitizer_regex']) ? $_ENV[$identifier.'_sanitizer_regex'] : '';
         if($this->validateConfig()) {
             $dns = $this->driver . ':dbname=' . $this->database . ";host=" . $this->host;
-            $pdo = new \PDO($dns, $this->user, $this->pass, array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+            $options = [];
+            if($this->driver == 'mysql') {
+                $options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
+            }
+            $pdo = new \PDO($dns, $this->user, $this->pass, $options);
             return new MySqlSource($pdo);
         }
         else {
