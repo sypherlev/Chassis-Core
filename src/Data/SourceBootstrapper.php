@@ -3,6 +3,7 @@
 namespace SypherLev\Chassis\Data;
 
 use SypherLev\Blueprint\QueryBuilders\MySql\MySqlSource;
+use SypherLev\Blueprint\QueryBuilders\Postgres\PostgresSource;
 
 class SourceBootstrapper
 {
@@ -27,7 +28,15 @@ class SourceBootstrapper
                 $options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
             }
             $pdo = new \PDO($dns, $this->user, $this->pass, $options);
-            return new MySqlSource($pdo);
+            if($this->driver == 'mysql') {
+                return new MySqlSource($pdo);
+            }
+            else if ($this->driver == 'pgsql') {
+                return new PostgresSource($pdo);
+            }
+            else {
+                throw (new \Exception("Unsupported database driver"));
+            }
         }
         else {
             throw (new \Exception("Invalid or missing database connection parameters"));
