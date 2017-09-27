@@ -6,6 +6,8 @@ class WebResponse implements ResponseInterface
 {
     private $template;
     private $data = [];
+    private $template_dir = '../templates';
+    private $cache_dir = '../cache';
 
     public function setTemplate($template) {
         $this->template = $template;
@@ -22,10 +24,18 @@ class WebResponse implements ResponseInterface
         $this->data[$label] = $data;
     }
 
+    public function setTemplateDirectory($directory) {
+        $this->template_dir = $directory;
+    }
+
+    public function setCacheDirectory($directory) {
+        $this->cache_dir = $directory;
+    }
+
     public function out() {
-        $loader = new \Twig_Loader_Filesystem('../templates');
+        $loader = new \Twig_Loader_Filesystem($this->template_dir);
         $twig = new \Twig_Environment($loader, array(
-            'cache' => '../cache',
+            'cache' => $this->cache_dir,
             'debug' => $_ENV['devmode']
         ));
         $template = $twig->load($this->template);
