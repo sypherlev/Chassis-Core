@@ -13,8 +13,12 @@ class SourceBootstrapper
         $database = isset($_ENV[$identifier.'_dbname']) ? $_ENV[$identifier.'_dbname'] : '';
         $user = isset($_ENV[$identifier.'_username']) ? $_ENV[$identifier.'_username'] : '';
         $pass = isset($_ENV[$identifier.'_password']) ? $_ENV[$identifier.'_password'] : '';
+        $port = isset($_ENV[$identifier.'_port']) ? $_ENV[$identifier.'_port'] : '';
         try {
             $dns = $driver . ':dbname=' . $database . ";host=" . $host;
+            if($port != "") {
+                $dns .= ";port=".$port;
+            }
             $options = [];
             if($driver == 'mysql') {
                 $options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
