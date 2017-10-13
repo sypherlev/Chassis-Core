@@ -25,6 +25,7 @@ class ApiResponse implements ResponseInterface
     public function out()
     {
         http_response_code($this->httpcode);
+        header("Content-type:application/json");
         echo json_encode(array('message' => $this->message, 'data' => $this->data), JSON_NUMERIC_CHECK);
     }
 
