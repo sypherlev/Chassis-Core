@@ -177,9 +177,16 @@ class BaseMigration extends Blueprint
     // props to StackOverflow for this solution:
     // http://stackoverflow.com/questions/4027769/running-mysql-sql-files-in-php
     private function runSQLFile($path) {
-        $command = "{$this->cliutil} -u{$this->dbuser} -p{$this->dbpass} "
-            . "-h {$this->dbhost} -D {$this->db} < {$path}";
-        return shell_exec($command);
+        if($this->driver == 'mysql') {
+            $command = "{$this->cliutil} -u {$this->dbuser} -p {$this->dbpass} "
+                . "-h {$this->dbhost} -D {$this->db} < {$path}";
+            return shell_exec($command);
+        }
+        if($this->driver == 'pgsql') {
+            $command = "PGPASSWORD={$this->dbpass} {$this->cliutil} -U {$this->dbuser} "
+                . "-h {$this->dbhost} -p {$this->port} -d {$this->db} -f {$path}";
+            return shell_exec($command);
+        }
     }
 
     private function runBackup() {
