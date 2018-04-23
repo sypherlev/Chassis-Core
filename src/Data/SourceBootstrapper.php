@@ -22,7 +22,7 @@ class SourceBootstrapper
         $this->user = isset($_ENV[$identifier.'_username']) ? $_ENV[$identifier.'_username'] : '';
         $this->pass = isset($_ENV[$identifier.'_password']) ? $_ENV[$identifier.'_password'] : '';
         $this->port = isset($_ENV[$identifier.'_port']) ? $_ENV[$identifier.'_port'] : '';
-        $this->cliutil = isset($_ENV[$identifier.'cliutil']) ? $_ENV[$identifier.'_cliutil'] : '';
+        $this->cliutil = isset($_ENV[$identifier.'_cliutil']) ? $_ENV[$identifier.'_cliutil'] : '';
 
         if($this->port == "") {
             if($this->driver == 'mysql') {
