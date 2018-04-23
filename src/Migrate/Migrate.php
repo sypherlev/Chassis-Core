@@ -116,7 +116,9 @@ class Migrate extends CliAction
             $bootstrapper->user,
             $bootstrapper->pass,
             $bootstrapper->database,
-            $bootstrapper->host
+            $bootstrapper->host,
+            $bootstrapper->port,
+            $bootstrapper->cliutil
         );
     }
 }

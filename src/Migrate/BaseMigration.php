@@ -13,17 +13,25 @@ class BaseMigration extends Blueprint
     private $dbpass;
     private $db;
     private $dbhost;
+    private $port;
+    private $cliutil;
 
     public function __construct(SourceInterface $source, QueryInterface $query) {
         parent::__construct($source, $query);
     }
 
-    public function setRawDatabaseParams($driver, $user, $pass, $db, $host) {
+    public function setRawDatabaseParams($driver, $user, $pass, $db, $host, $port, $cliutil) {
         $this->driver = $driver;
         $this->dbuser = $user;
         $this->dbpass = $pass;
         $this->db = $db;
         $this->dbhost = $host;
+        $this->port = $port;
+        $this->cliutil = $cliutil;
+
+        if($cliutil == '') {
+            $this->cliutil = $this->driver;
+        }
     }
 
     public function create($migrationname) {
@@ -169,7 +177,7 @@ class BaseMigration extends Blueprint
     // props to StackOverflow for this solution:
     // http://stackoverflow.com/questions/4027769/running-mysql-sql-files-in-php
     private function runSQLFile($path) {
-        $command = "{$this->driver} -u{$this->dbuser} -p{$this->dbpass} "
+        $command = "{$this->cliutil} -u{$this->dbuser} -p{$this->dbpass} "
             . "-h {$this->dbhost} -D {$this->db} < {$path}";
         return shell_exec($command);
     }

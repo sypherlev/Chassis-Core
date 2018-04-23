@@ -13,6 +13,7 @@ class SourceBootstrapper
     public $user;
     public $pass;
     public $port;
+    public $cliutil;
 
     public function generateSource($identifier) {
         $this->driver = isset($_ENV[$identifier.'_engine']) ? $_ENV[$identifier.'_engine'] : '';
@@ -21,6 +22,17 @@ class SourceBootstrapper
         $this->user = isset($_ENV[$identifier.'_username']) ? $_ENV[$identifier.'_username'] : '';
         $this->pass = isset($_ENV[$identifier.'_password']) ? $_ENV[$identifier.'_password'] : '';
         $this->port = isset($_ENV[$identifier.'_port']) ? $_ENV[$identifier.'_port'] : '';
+        $this->cliutil = isset($_ENV[$identifier.'cliutil']) ? $_ENV[$identifier.'_cliutil'] : '';
+
+        if($this->port == "") {
+            if($this->driver == 'mysql') {
+                $this->port = 3306;
+            }
+            if($this->driver == 'pgsql') {
+                $this->port = 5432;
+            }
+        }
+
         if($this->validateConfig()) {
             $dns = $this->driver . ':dbname=' . $this->database . ";host=" . $this->host;
             $options = [];
