@@ -198,7 +198,7 @@ class BaseMigration extends Blueprint
         $dumpcommand = "mysqldump -u{$this->dbuser} -p{$this->dbpass} -h {$this->dbhost} -x {$this->db} | gzip > ";
 
         if($this->driver == 'pgsql') {
-            $dumpcommand = "pg_dump -u{$this->dbuser} -p{$this->dbpass} -h {$this->dbhost} -x {$this->db} | gzip > ";
+            $dumpcommand = "PGPASSWORD={$this->dbpass} pg_dump -U {$this->dbuser} -h {$this->dbhost} -x {$this->db} | gzip > ";
         }
 
         $filename = "{$this->db}-backup-".date('Y-m-d--H-i-s', time()).".sql.gz";
