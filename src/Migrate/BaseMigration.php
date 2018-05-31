@@ -151,10 +151,17 @@ class BaseMigration extends Blueprint
                 ->one();
             if(!$check) {
                 // then this is a new migration, add it to the database
+                // first fix the time issue
+                if($this->driver == "mysql") {
+                    $last_update = time();
+                }
+                else {
+                    $last_update = date("Y-m-d H:i:s", time());
+                }
                 $newmigration = [
                     'filename' => $file,
                     'status' => 0,
-                    'last_update' => time()
+                    'last_update' => $last_update
                 ];
                 $this->insert()
                     ->table('migrations')
