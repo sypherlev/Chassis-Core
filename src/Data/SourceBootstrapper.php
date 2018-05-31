@@ -2,7 +2,9 @@
 
 namespace SypherLev\Chassis\Data;
 
+use SypherLev\Blueprint\QueryBuilders\MySql\MySqlQuery;
 use SypherLev\Blueprint\QueryBuilders\MySql\MySqlSource;
+use SypherLev\Blueprint\QueryBuilders\Postgres\PostgresQuery;
 use SypherLev\Blueprint\QueryBuilders\Postgres\PostgresSource;
 
 class SourceBootstrapper
@@ -56,6 +58,16 @@ class SourceBootstrapper
         else {
             throw (new \Exception("Invalid or missing database connection parameters"));
         }
+    }
+
+    public function generateQuery($identifier) {
+        if($_ENV[$identifier.'_engine'] == 'mysql') {
+            return new MySqlQuery();
+        }
+        if($_ENV[$identifier.'_engine'] == 'pgsql') {
+            return new PostgresQuery();
+        }
+        throw (new \Exception("Database engine not supported, or no such database associated with that identifier"));
     }
 
     private function validateConfig() {
