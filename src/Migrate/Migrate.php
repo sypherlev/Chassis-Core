@@ -110,7 +110,8 @@ class Migrate extends CliAction
     private function setupMigrationHandler() {
         $bootstrapper = new SourceBootstrapper();
         $source = $bootstrapper->generateSource($this->database);
-        $this->migrationhandler = new BaseMigration($source, new MySqlQuery());
+        $query = $bootstrapper->generateQuery($this->database);
+        $this->migrationhandler = new BaseMigration($source, $query);
         $this->migrationhandler->setRawDatabaseParams(
             $bootstrapper->driver,
             $bootstrapper->user,
