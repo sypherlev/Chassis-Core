@@ -17,6 +17,11 @@ class Logger
         self::logToFile($message);
     }
 
+    public function storeArray(array $e) {
+        $message = self::createLogMessage(print_r($e, true));
+        self::logToFile($message);
+    }
+
     public static function logToFile($message) {
         $logfile = getenv('logfile');
         if(!is_null($logfile) && $logfile !== "" && $logfile !== false) {
