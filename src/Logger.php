@@ -7,8 +7,13 @@ namespace SypherLev\Chassis;
 
 class Logger
 {
-    public static function store($message) {
+    public static function store(string $message) {
         $message = self::createLogMessage($message);
+        self::logToFile($message);
+    }
+
+    public static function storeException(\Exception $e) {
+        $message = self::createLogMessage($e->getMessage().PHP_EOL.$e->getTraceAsString());
         self::logToFile($message);
     }
 
