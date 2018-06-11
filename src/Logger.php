@@ -14,7 +14,7 @@ class Logger
 
     public static function logToFile($message) {
         $logfile = getenv('logfile');
-        if(!is_null($logfile) && $logfile !== "") {
+        if(!is_null($logfile) && $logfile !== "" && $logfile !== false) {
             touch($logfile);
         }
         else {
