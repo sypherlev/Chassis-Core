@@ -73,6 +73,11 @@ class Logger
     }
 
     public static function createLogMessage($message) {
+        if (php_sapi_name() == "cli") {
+            return 'CLI - '.date("F j, Y, g:i a").PHP_EOL.
+                $message.PHP_EOL.
+                "-------------------------".PHP_EOL;
+        }
         return "IP: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
             $message.PHP_EOL.
             "-------------------------".PHP_EOL;
