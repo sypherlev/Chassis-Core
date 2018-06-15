@@ -25,7 +25,7 @@ class Logger
         self::logToFile($message);
     }
 
-    public function storeArray(array $e, $destination = 'file') {
+    public static function storeArray(array $e, $destination = 'file') {
         $message = self::createLogMessage(print_r($e, true));
         if($destination == 'slack') {
             self::logToSlack($message);
