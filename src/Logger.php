@@ -7,46 +7,85 @@ namespace SypherLev\Chassis;
 
 class Logger
 {
-    public static function store(string $message, $destination = 'file') {
-        $message = self::createLogMessage($message);
-        if($destination == 'slack') {
-            self::logToSlack($message);
-            return;
+    private $logtype;
+
+    const TO_SLACK = 'slack';
+    const TO_FILE = 'file';
+
+    public function __construct($logtype = null)
+    {
+        if(is_null($logtype)) {
+            $this->logtype = self::TO_FILE;
         }
-        self::logToFile($message);
+        else {
+            $this->logtype = $logtype;
+        }
     }
 
-    public static function storeException(\Exception $e, $destination = 'file') {
-        $message = self::createLogMessage($e->getMessage().PHP_EOL.$e->getTraceAsString());
-        if($destination == 'slack') {
-            self::logToSlack($message);
+    public function log($thing) {
+        if(is_string($thing)) {
+            $this->storeString($thing);
             return;
         }
-        self::logToFile($message);
-    }
-
-    public static function storeArray(array $e, $destination = 'file') {
-        $message = self::createLogMessage(print_r($e, true));
-        if($destination == 'slack') {
-            self::logToSlack($message);
+        if(is_array($thing)) {
+            $this->storeArray($thing);
             return;
         }
-        self::logToFile($message);
+        if(is_a($thing, 'Exception')) {
+            $this->storeException($thing);
+            return;
+        }
+        // at this point, we're dealing with a thing that possibly can't be stored,
+        // so cast it to a string and hope for the best
+        $thing = (string)$thing;
+        $this->storeString($thing);
     }
 
-    public static function logToFile($message) {
+    public function setLogType($type) {
+        $this->logtype = $type;
+    }
+
+    private function storeString(string $message) {
+        $message = $this->createLogMessage($message);
+        $this->logMessage($message, $this->logtype);
+    }
+
+    private function storeException(\Exception $e) {
+        $message = $this->createLogMessage($e->getMessage().PHP_EOL.$e->getTraceAsString());
+        $this->logMessage($message, $this->logtype);
+    }
+
+    private function storeArray(array $e) {
+        $message = $this->createLogMessage(print_r($e, true));
+        $this->logMessage($message, $this->logtype);
+    }
+
+    private function logMessage($message, $type) {
+        switch ($type) {
+            case self::TO_SLACK:
+                $this->logToSlack($message);
+                break;
+            case self::TO_FILE:
+                $this->logToFile($message);
+                break;
+            default:
+                $this->logToFile($message);
+        }
+    }
+
+    private function logToFile($message) {
         $logfile = getenv('logfile');
         if(!is_null($logfile) && $logfile !== "" && $logfile !== false) {
             touch($logfile);
         }
         else {
-            $logfile = "../../chassis.log";
+            $logfile = "../chassis.log";
             touch($logfile);
         }
         file_put_contents($logfile, $message, FILE_APPEND);
     }
 
-    public static function logToSlack($message) {
+    private function logToSlack($message) {
 
         $channel  = getenv('slack_channel');
         $bot_name = 'Webhook';
@@ -72,7 +111,7 @@ class Logger
         curl_exec($ch);
     }
 
-    public static function createLogMessage($message) {
+    private function createLogMessage($message) {
         if (php_sapi_name() == "cli") {
             return 'CLI - '.date("F j, Y, g:i a").PHP_EOL.
                 $message.PHP_EOL.
