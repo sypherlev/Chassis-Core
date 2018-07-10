@@ -185,7 +185,7 @@ class BaseMigration extends Blueprint
     // http://stackoverflow.com/questions/4027769/running-mysql-sql-files-in-php
     private function runSQLFile($path) {
         if($this->driver == 'mysql') {
-            $command = "{$this->cliutil} -u {$this->dbuser} -p {$this->dbpass} "
+            $command = "{$this->cliutil} -u {$this->dbuser} -p{$this->dbpass} "
                 . "-h {$this->dbhost} -D {$this->db} < {$path}";
             return shell_exec($command);
         }
