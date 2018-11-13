@@ -42,6 +42,10 @@ class Ignition
                 header("Location: $secureredirect");
                 exit;
             }
+            if($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+                http_response_code(200);
+                die;
+            }
             if($router == null) {
                 http_response_code(500);
                 die('500 Internal server error: Application router is not available.');
