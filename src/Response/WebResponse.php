@@ -34,10 +34,20 @@ class WebResponse implements ResponseInterface
 
     public function out() {
         $loader = new \Twig_Loader_Filesystem($this->template_dir);
-        $twig = new \Twig_Environment($loader, array(
-            'cache' => $this->cache_dir,
-            'debug' => $_ENV['devmode']
-        ));
+        if (getenv('devmode') === 'true') {
+            $twig_config = [
+                'cache' => false,
+                'debug' => true,
+                'auto_reload' => true
+            ];
+        }
+        else {
+            $twig_config = [
+                'cache' => $this->cache_dir,
+                'debug' => false
+            ];
+        }
+        $twig = new \Twig_Environment($loader, $twig_config);
         $template = $twig->load($this->template);
         echo $template->render($this->data);
     }
