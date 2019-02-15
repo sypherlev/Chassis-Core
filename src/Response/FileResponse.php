@@ -22,11 +22,17 @@ class FileResponse implements ResponseInterface
     public function out()
     {
         http_response_code($this->httpcode);
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
         if(!empty($this->filepath)) {
             $this->setHeaders();
             readfile($this->filepath);
         }
-        die;
+    }
+
+    public function setFileTypeHeader($header) {
+        header("Content-type: application/$header");
     }
 
     private function setHeaders() {
