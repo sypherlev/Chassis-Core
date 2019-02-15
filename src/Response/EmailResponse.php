@@ -21,7 +21,7 @@ class EmailResponse
         $this->mailer = $mailer = new \PHPMailer();
     }
 
-    protected function attachFile($filepath, $name = '')
+    public function attachFile($filepath, $name = '')
     {
         if($name != '') {
             $this->mailer->addAttachment($filepath);
@@ -31,7 +31,7 @@ class EmailResponse
         }
     }
 
-    protected function out()
+    public function out()
     {
         $this->mailer->setFrom($this->emailfrom);
         if(strpos($this->emailto, ',') !== false) {
@@ -90,7 +90,7 @@ class EmailResponse
         $this->isHTML = false;
     }
 
-    protected function setDevMode($switch = true) {
+    public function setDevMode($switch = true) {
         $this->devMode = $switch;
     }
 }
