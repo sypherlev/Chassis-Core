@@ -5,7 +5,6 @@ namespace SypherLev\Chassis\Request;
 class Web
 {
     use WithEnvironmentVars;
-    use WithMiddlewareVars;
 
     private $urlSegments = [];
     private $getparams = [];

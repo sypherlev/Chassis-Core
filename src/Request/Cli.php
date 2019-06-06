@@ -5,7 +5,6 @@ namespace SypherLev\Chassis\Request;
 class Cli
 {
     use WithEnvironmentVars;
-    use WithMiddlewareVars;
 
     private $requestdata;
 
