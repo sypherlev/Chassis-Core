@@ -2,10 +2,8 @@
 
 namespace SypherLev\Chassis\Migrate;
 
-use SypherLev\Blueprint\QueryBuilders\MySql\MySqlQuery;
 use SypherLev\Chassis\Action\CliAction;
 use SypherLev\Chassis\Data\SourceBootstrapper;
-use SypherLev\Chassis\Middleware\Collection;
 use SypherLev\Chassis\Request\Cli;
 use SypherLev\Chassis\Response\CliResponse;
 
@@ -18,7 +16,7 @@ class Migrate extends CliAction
 
     public function __construct(Cli $request)
     {
-        parent::__construct($request, new Collection());
+        parent::__construct($request);
         $this->database = $this->getRequest()->fromLineVars(0);
         $this->cliresponse = new CliResponse();
     }
