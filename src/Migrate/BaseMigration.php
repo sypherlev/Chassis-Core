@@ -34,8 +34,8 @@ class BaseMigration extends Blueprint
         }
     }
 
-    public function create($migrationname) {
-        $filename = time().'_'.preg_replace("/[^a-zA-Z0-9_]/", "", $migrationname).'.sql';
+    public function create($database_prefix, $migrationname) {
+        $filename = $database_prefix.'_'.time().'_'.preg_replace("/[^a-zA-Z0-9_]/", "", $migrationname).'.sql';
         $filepath = 'migrations'. DIRECTORY_SEPARATOR . $filename;
         touch($filepath);
         if(file_exists($filepath)) {
@@ -44,10 +44,14 @@ class BaseMigration extends Blueprint
                 'status' => 0,
                 'last_update' => time()
             ];
-            $this->insert()
+            $check = $this->insert()
                 ->table('migrations')
                 ->add($newmigration)
                 ->execute();
+            if(!$check) {
+                unlink($filepath);
+                throw new \Exception("Error: Migration not added to the database; please check that the migrations table exists");
+            }
             return $filename;
         }
         else {
@@ -61,11 +65,7 @@ class BaseMigration extends Blueprint
         if(file_exists($filepath)) {
             $check = $this->runMigration($filepath);
             if ($check !== true) {
-                $results[] = [
-                    'file' => $filename,
-                    'output' => "Migration halt on the following output: " . $check
-                ];
-                return $results;
+                throw new \Exception("Bootstrap migration failure; bootstrap process stopped");
             }
             else {
                 $newmigration = [
@@ -73,19 +73,20 @@ class BaseMigration extends Blueprint
                     'status' => 1,
                     'last_update' => time()
                 ];
-                $this->insert()
+                $check = $this->insert()
                     ->table('migrations')
                     ->add($newmigration)
                     ->execute();
-                $results[] = [
-                    'file' => $filename,
-                    'output' => "Bootstrap complete"
-                ];
-                return $results;
+                if($check === true) {
+                    return true;
+                }
+                else {
+                    throw new \Exception("Bootstrap process completed but bootstrap record not added to the database");
+                }
             }
         }
         else {
-            return false;
+            throw new \Exception("Can't find bootstrap file at ".$filepath);
         }
     }
 
@@ -99,8 +100,8 @@ class BaseMigration extends Blueprint
         }
     }
 
-    public function migrate() {
-        $this->checkNew();
+    public function migrate($database_prefix) {
+        $this->checkNew($database_prefix);
         $results = [];
         $migrations = $this->select()
             ->table('migrations')
@@ -142,9 +143,13 @@ class BaseMigration extends Blueprint
         return $results;
     }
 
-    private function checkNew() {
+    private function checkNew($database_prefix) {
         $filelist = array_diff(scandir('migrations'), array('.', '..'));
         foreach ($filelist as $file) {
+            // check if this is a migration for this database by looking for the prefix
+            if(strpos($file, $database_prefix) !== 0) {
+                continue;
+            }
             $check = $this->select()
                 ->table('migrations')
                 ->where(['filename' => $file])
@@ -174,7 +179,7 @@ class BaseMigration extends Blueprint
     private function runMigration($filename) {
         $output = $this->runSQLFile($filename);
         if(strlen($output) > 0) { // then something happened, check back
-            return $output;
+            throw new \Exception($output);
         }
         else { // then it executed without errors
             return true;

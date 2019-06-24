@@ -21,91 +21,66 @@ class Migrate extends CliAction
         $this->cliresponse = new CliResponse();
     }
 
-    public function bootstrap() {
-        try {
-            $this->setupMigrationHandler();
-            $check = $this->migrationhandler->bootstrap($this->getRequest()->fromLineVars(1));
-        }
-        catch (\Exception $e) {
-            var_dump($e);
-            $check = false;
-        }
-        if($check) {
+    public function bootstrap()
+    {
+        $this->setupMigrationHandler();
+        $check = $this->migrationhandler->bootstrap($this->getRequest()->fromLineVars(1));
+        if ($check) {
             $this->cliresponse->setOutputMessage('Bootstrap output');
             foreach ($check as $idx => $m) {
                 $this->cliresponse->insertOutputData($idx, $m);
             }
+            $this->cliresponse->out();
+        } else {
+            throw new \Exception('Error: bootstrap failure, no filename specified or file not found');
         }
-        else {
-            $this->cliresponse->setOutputMessage('Error: bootstrap failure, no filename specified or file not found');
-        }
-        $this->cliresponse->out();
     }
 
-    public function backup() {
-        try {
-            $this->setupMigrationHandler();
-            $check = $this->migrationhandler->backup();
-        }
-        catch (\Exception $e) {
-            var_dump($e);
-            $check = false;
-        }
-        if($check) {
+    public function backup()
+    {
+        $this->setupMigrationHandler();
+        $check = $this->migrationhandler->backup();
+        if ($check) {
             $this->cliresponse->setOutputMessage('Backup output stored in /databackups');
+            $this->cliresponse->out();
+        } else {
+            throw new \Exception('Error: backup failure, backup not complete');
         }
-        else {
-            $this->cliresponse->setOutputMessage('Error: backup failure, backup not complete');
-        }
-        $this->cliresponse->out();
     }
 
-    public function createMigration() {
-        try {
-            $this->setupMigrationHandler();
-            $check = $this->migrationhandler->create($this->getRequest()->fromLineVars(1));
+    public function createMigration()
+    {
+        $this->setupMigrationHandler();
+        $check = $this->migrationhandler->create($this->getRequest()->fromLineVars(0), $this->getRequest()->fromLineVars(1));
+        if ($check) {
+            $this->cliresponse->setOutputMessage('Migration created: ' . $check);
+            $this->cliresponse->out();
+        } else {
+            throw new \Exception('Error: migration could not be created');
         }
-        catch (\Exception $e) {
-            var_dump($e);
-            $check = false;
-        }
-        if($check) {
-            $this->cliresponse->setOutputMessage('Migration created: '.$check);
-        }
-        else {
-            $this->cliresponse->setOutputMessage('Error: migration could not be created, no filename specificed');
-        }
-        $this->cliresponse->out();
+
     }
 
-    public function migrateUnapplied() {
-        try {
-            $this->setupMigrationHandler();
-            $check = $this->migrationhandler->migrate();
-        }
-        catch (\Exception $e) {
-            var_dump($e);
-            $check = false;
-        }
-        if(is_array($check)) {
+    public function migrateUnapplied()
+    {
+        $this->setupMigrationHandler();
+        $check = $this->migrationhandler->migrate($this->getRequest()->fromLineVars(0));
+        if (is_array($check)) {
             $this->cliresponse->setOutputMessage('Migration Result');
-            if(empty($check)) {
+            if (empty($check)) {
                 $check[] = 'No migrations waiting to be applied';
             }
             foreach ($check as $idx => $m) {
                 $this->cliresponse->insertOutputData($idx, $m);
             }
+            $this->cliresponse->out();
+        } else {
+            throw new \Exception('Error: migrations could not be completed');
         }
-        else {
-            if($check === false) {
-                $check = "script failure";
-            }
-            $this->cliresponse->setOutputMessage('Error: migrations could not be completed: '.$check);
-        }
-        $this->cliresponse->out();
     }
 
-    private function setupMigrationHandler() {
+    private function setupMigrationHandler()
+    {
         $bootstrapper = new SourceBootstrapper();
         $source = $bootstrapper->generateSource($this->database);
         $query = $bootstrapper->generateQuery($this->database);
