@@ -35,8 +35,9 @@ class ApiResponse implements ResponseInterface
     {
         // check if there is no data but the response is still valid
         if (is_array($variable) && count($variable) == 0) {
-            $this->setHTTPCode(204);
+            $this->setHTTPCode(200);
             $this->setOutputMessage('No data');
+            $this->insertOutputData($label, $variable);
             $this->out();
             return;
         }
