@@ -30,12 +30,19 @@ class ApiResponse implements ResponseInterface
     }
 
     public function dataResponse($label, $variable) {
-        if($variable) {
-            $this->setHTTPCode(200);
+        if(!empty($variable)) {
+            // check if there is no data but the response is still valid
+            if(is_array($variable) && count($variable) == 0) {
+                $this->setHTTPCode(204);
+                $this->setOutputMessage('No data');
+            }
+            else {
+                $this->setHTTPCode(200);
+                $this->setOutputMessage('Data retrieved');
+            }
             $this->insertOutputData($label, $variable);
-            $this->setOutputMessage('Data retrieved');
         }
-        else {
+    else {
             $this->setHTTPCode(500);
             $this->setOutputMessage('Data not found');
         }
