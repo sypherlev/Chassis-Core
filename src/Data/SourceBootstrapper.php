@@ -18,13 +18,13 @@ class SourceBootstrapper
     public $cliutil;
 
     public function generateSource($identifier) {
-        $this->driver = isset($_ENV[$identifier.'_engine']) ? $_ENV[$identifier.'_engine'] : '';
-        $this->host = isset($_ENV[$identifier.'_host']) ? $_ENV[$identifier.'_host'] : '';
-        $this->database = isset($_ENV[$identifier.'_dbname']) ? $_ENV[$identifier.'_dbname'] : '';
-        $this->user = isset($_ENV[$identifier.'_username']) ? $_ENV[$identifier.'_username'] : '';
-        $this->pass = isset($_ENV[$identifier.'_password']) ? $_ENV[$identifier.'_password'] : '';
-        $this->port = isset($_ENV[$identifier.'_port']) ? $_ENV[$identifier.'_port'] : '';
-        $this->cliutil = isset($_ENV[$identifier.'_cliutil']) ? $_ENV[$identifier.'_cliutil'] : '';
+        $this->driver = getenv($identifier.'_engine');
+        $this->host = getenv($identifier.'_host');
+        $this->database = getenv($identifier.'_dbname');
+        $this->user = getenv($identifier.'_username');
+        $this->pass = getenv($identifier.'_password');
+        $this->port = getenv($identifier.'_port');
+        $this->cliutil = getenv($identifier.'_cliutil');
 
         if($this->port == "") {
             if($this->driver == 'mysql') {
@@ -61,29 +61,29 @@ class SourceBootstrapper
     }
 
     public function generateQuery($identifier) {
-        if($_ENV[$identifier.'_engine'] == 'mysql') {
+        if(getenv($identifier.'_engine') == 'mysql') {
             return new MySqlQuery();
         }
-        if($_ENV[$identifier.'_engine'] == 'pgsql') {
+        if(getenv($identifier.'_engine') == 'pgsql') {
             return new PostgresQuery();
         }
         throw (new \Exception("Database engine not supported, or no such database associated with that identifier"));
     }
 
     private function validateConfig() {
-        if($this->driver == '') {
+        if(!$this->driver) {
             return false;
         }
-        if($this->host == '') {
+        if(!$this->host) {
             return false;
         }
-        if($this->database == '') {
+        if(!$this->database) {
             return false;
         }
-        if($this->user == '') {
+        if(!$this->user) {
             return false;
         }
-        if($this->pass == '') {
+        if(!$this->pass) {
             return false;
         }
         return true;

@@ -7,7 +7,7 @@ trait WithEnvironmentVars
     private $env_data;
 
     private function setEnvironmentVars() {
-        $this->env_data = $_ENV;
+        $this->env_data = getenv();
     }
 
     public function fromEnvironment($name) {

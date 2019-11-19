@@ -15,7 +15,7 @@ class EmailResponse
 
     public function __construct()
     {
-        if(isset($_ENV['devmode']) && $_ENV['devmode'] === 'false') {
+        if(getenv('devmode') === 'false') {
             $this->setDevMode(false);
         }
         $this->mailer = $mailer = new \PHPMailer();

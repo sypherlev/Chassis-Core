@@ -36,7 +36,7 @@ class Ignition
                 // do not support requests without a host
                 die;
             }
-            if(isset($_ENV['alwaysssl']) && $_ENV['alwaysssl'] === 'true' && !$this->isSecure()) {
+            if(getenv('alwaysssl') === 'true' && !$this->isSecure()) {
                 $secureredirect = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 header("Location: $secureredirect");
                 exit;
