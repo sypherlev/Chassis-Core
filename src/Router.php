@@ -52,7 +52,10 @@ class Router
         return $ready;
     }
 
-    public function addRoute(string $method, string $pattern, string $classname) {
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    public function addRoute($method, string $pattern, string $classname) {
         $newroute = new \stdClass();
         $newroute->method = $method;
         $newroute->pattern = $pattern;
