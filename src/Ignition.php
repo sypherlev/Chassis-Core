@@ -2,18 +2,16 @@
 
 namespace SypherLev\Chassis;
 
+use SypherLev\Chassis\Error\ChassisException;
 use SypherLev\Chassis\Request\Cli;
 use SypherLev\Chassis\Request\Web;
 use SypherLev\Chassis\Action\ActionInterface;
 
 class Ignition
 {
-    /** @var ActionInterface */
-    protected $action;
-
-    public function run(Router $router = null)
+    public function run(Router $router = null, bool $isCli = false)
     {
-        if (php_sapi_name() == "cli") {
+        if ($isCli) {
             // In cli-mode; setup CLI Request and go to CLI action
             $request = new Cli();
             $methodname = null;
@@ -23,10 +21,15 @@ class Ignition
                 $actionname = $possiblemethod[0];
                 $methodname = $possiblemethod[1];
             }
-            $this->action = new $actionname($request);
-            $this->action->setup($methodname);
-            if ($methodname != null && $this->action->isExecutable()) {
-                $this->action->execute();
+
+            /** @var ActionInterface */
+            $action = new $actionname($request);
+            if(is_null($methodname)) {
+                $methodname = 'index';
+            }
+            $action->setup($methodname);
+            if ($methodname != null && $action->isExecutable()) {
+                $action->execute();
             }
 
         } else {
@@ -34,34 +37,35 @@ class Ignition
             // initial check for whether to redirect to secure page
             if (!isset($_SERVER['HTTP_HOST'])) {
                 // do not support requests without a host
-                die;
+                http_response_code(500);
+                echo "Error: No host detected; exiting";
+                return;
             }
             if(getenv('alwaysssl') === 'true' && !$this->isSecure()) {
                 $secureredirect = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 header("Location: $secureredirect");
-                exit;
+                return;
             }
             if($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                 http_response_code(200);
-                die;
+                return;
             }
             if($router == null) {
                 http_response_code(500);
-                die('500 Internal server error: Application router is not available.');
+                echo '500 Internal server error: Application router is not available.';
+                return;
             }
             $router->readyDispatcher();
             $route = $router->trigger();
-            if (is_null($route)) {
+            if ($route->http_code === 404) {
                 http_response_code(404);
-                die('404 Page not found.');
+                echo '404 Page not found.';
+                return;
             }
-            if ($route === false) {
+            if ($route->http_code === 405) {
                 http_response_code(405);
-                die('405 HTTP method not allowed.');
-            }
-            if (!isset($route->action)) {
-                http_response_code(500);
-                die('500 Internal server error: Application action not found.');
+                echo '405 HTTP method not allowed.';
+                return;
             }
             $request = new Web();
             if(!empty($route->segments)) {
@@ -77,15 +81,24 @@ class Ignition
                 $actionname = $possiblemethod[0];
                 $methodname = $possiblemethod[1];
             }
-            $this->action = new $actionname($request);
-            $this->action->setup($methodname);
-            if ($methodname != null && $this->action->isExecutable()) {
-                $this->action->execute();
+            try {
+                if(is_null($methodname)) {
+                    $methodname = 'index';
+                }
+                $action = new $actionname($request);
+                $action->setup($methodname);
+                if ($action->isExecutable()) {
+                    $action->execute();
+                }
+            }
+            catch (\TypeError $e) {
+                echo "Routing config failure; this route will only respond to command line input";
+                return;
             }
         }
     }
 
-    private function isSecure() {
+    private function isSecure() : bool {
         $isSecure = false;
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
             $isSecure = true;

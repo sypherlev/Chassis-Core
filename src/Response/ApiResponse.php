@@ -9,17 +9,20 @@ class ApiResponse implements ResponseInterface
     private $httpcode = 404;
     private $message = 'No response found';
 
-    public function setHTTPCode($code)
+    public function setHTTPCode(int $code)
     {
         $this->httpcode = (int)$code;
     }
 
-    public function setOutputMessage($message)
+    public function setOutputMessage(string $message)
     {
         $this->message = $message;
     }
 
-    public function insertOutputData($label, $data)
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    public function insertOutputData(string $label, $data)
     {
         $this->data[$label] = $data;
     }
@@ -31,7 +34,10 @@ class ApiResponse implements ResponseInterface
         echo json_encode(array('message' => $this->message, 'data' => $this->data), JSON_NUMERIC_CHECK);
     }
 
-    public function dataResponse($label, $variable)
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    public function dataResponse(string $label, $variable)
     {
         // check if there is no data but the response is still valid
         if (is_array($variable) && count($variable) == 0) {
@@ -52,7 +58,7 @@ class ApiResponse implements ResponseInterface
         $this->out();
     }
 
-    public function messageResponse($message, $isOkay = true)
+    public function messageResponse(string $message, bool $isOkay = true)
     {
         if ($isOkay) {
             $this->setHTTPCode(200);

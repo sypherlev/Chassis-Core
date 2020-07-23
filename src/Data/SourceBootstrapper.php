@@ -6,18 +6,21 @@ use SypherLev\Blueprint\QueryBuilders\MySql\MySqlQuery;
 use SypherLev\Blueprint\QueryBuilders\MySql\MySqlSource;
 use SypherLev\Blueprint\QueryBuilders\Postgres\PostgresQuery;
 use SypherLev\Blueprint\QueryBuilders\Postgres\PostgresSource;
+use SypherLev\Blueprint\QueryBuilders\QueryInterface;
+use SypherLev\Blueprint\QueryBuilders\SourceInterface;
+use SypherLev\Chassis\Error\ChassisException;
 
 class SourceBootstrapper
 {
-    public $driver;
-    public $host;
-    public $database;
-    public $user;
-    public $pass;
-    public $port;
-    public $cliutil;
+    public $driver = "";
+    public $host = "";
+    public $database = "";
+    public $user = "";
+    public $pass = "";
+    public $port = "";
+    public $cliutil = "";
 
-    public function generateSource($identifier) {
+    public function generateSource(string $identifier, string $pdoclass = "\PDO") : SourceInterface {
         $this->driver = getenv($identifier.'_engine');
         $this->host = getenv($identifier.'_host');
         $this->database = getenv($identifier.'_dbname');
@@ -36,15 +39,15 @@ class SourceBootstrapper
         }
 
         if($this->validateConfig()) {
-            $dns = $this->driver . ':dbname=' . $this->database . ";host=" . $this->host;
+            $dns = (string)$this->driver . ':dbname=' . (string)$this->database . ";host=" . (string)$this->host;
             $options = [];
             if($this->driver == 'mysql') {
                 $options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
             }
             if($this->port != "") {
-                $dns .= ";port=".$this->port;
+                $dns .= ";port=".(string)$this->port;
             }
-            $pdo = new \PDO($dns, $this->user, $this->pass, $options);
+            $pdo = new $pdoclass($dns, (string)$this->user, (string)$this->pass, $options);
             if($this->driver == 'mysql') {
                 return new MySqlSource($pdo);
             }
@@ -52,40 +55,29 @@ class SourceBootstrapper
                 return new PostgresSource($pdo);
             }
             else {
-                throw (new \Exception("Unsupported database driver"));
+                throw (new ChassisException("Unsupported database driver; cannot generate Source object"));
             }
         }
         else {
-            throw (new \Exception("Invalid or missing database connection parameters"));
+            throw (new ChassisException("Invalid or missing database connection parameters"));
         }
     }
 
-    public function generateQuery($identifier) {
+    public function generateQuery(string $identifier) : QueryInterface {
         if(getenv($identifier.'_engine') == 'mysql') {
             return new MySqlQuery();
         }
         if(getenv($identifier.'_engine') == 'pgsql') {
             return new PostgresQuery();
         }
-        throw (new \Exception("Database engine not supported, or no such database associated with that identifier"));
+        throw (new ChassisException("Unsupported database driver or no database associated with identifier $identifier; cannot generate Query object"));
     }
 
-    private function validateConfig() {
-        if(!$this->driver) {
-            return false;
-        }
-        if(!$this->host) {
-            return false;
-        }
-        if(!$this->database) {
-            return false;
-        }
-        if(!$this->user) {
-            return false;
-        }
-        if(!$this->pass) {
-            return false;
-        }
-        return true;
+    private function validateConfig() : bool {
+        return !empty($this->driver) &&
+            !empty($this->host) &&
+            !empty($this->user) &&
+            !empty($this->pass) &&
+            !empty($this->database);
     }
 }

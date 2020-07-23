@@ -1,7 +1,6 @@
 #!/bin/bash
 
 chphpexe=$(which php)
-dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-migrations="$dir/../vendor/sypherlev/chassis-core/src/Migrate/migrations.php"
-$chphpexe $migrations $1 $2 $3
+migrations="$PWD/../public/index.php App\Domain\Migrate\MigrateAction"
+$chphpexe $migrations $1 $2 $3 $4 $5
 exit $?

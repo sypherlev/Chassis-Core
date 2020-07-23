@@ -11,16 +11,19 @@ class CliResponse implements ResponseInterface
     private $outputtype = 'cli';
     private $overwrite = true;
 
-    public function setOutputMessage($message) {
+    public function setOutputMessage(string $message) {
         $this->message = $message;
     }
 
-    public function insertOutputData($label, $data)
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    public function insertOutputData(string $label, $data)
     {
         $this->data[$label] = $data;
     }
 
-    public function setFileOutput($filename, $overwrite = true) {
+    public function setFileOutput(string $filename, bool $overwrite = true) {
         $this->outputfile = $filename;
         $this->outputtype = 'file';
         $this->overwrite = $overwrite;

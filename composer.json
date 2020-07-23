@@ -9,6 +9,11 @@
       "SypherLev\\Chassis\\": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests"
+    }
+  },
   "require": {
     "php": ">=7.0",
     "nikic/fast-route": "^1.0",
@@ -18,10 +23,18 @@
     "twig/twig": "~1.0",
     "league/container": "~2.2",
     "ext-json": "*",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-curl": "*"
   },
   "require-dev": {
-    "pds/skeleton": "~1.0"
+    "codeception/codeception": "^4.1",
+    "codeception/module-phpbrowser": "^1.0.0",
+    "codeception/module-asserts": "^1.0.0",
+    "codeception/module-rest": "^1.2",
+    "codeception/module-db": "^1.0",
+    "vimeo/psalm": "^3.12",
+    "donatj/mock-webserver": "^2.1",
+    "codeception/module-cli": "^1.0"
   },
   "config": {
     "bin-dir": "bin"

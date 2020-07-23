@@ -4,6 +4,9 @@ namespace SypherLev\Chassis\Response;
 
 interface ResponseInterface {
 
-    public function insertOutputData($label, $data);
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    public function insertOutputData(string $label, $data);
     public function out();
 }

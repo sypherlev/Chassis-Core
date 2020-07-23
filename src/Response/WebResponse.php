@@ -9,26 +9,32 @@ class WebResponse implements ResponseInterface
     private $template_dir = '../templates';
     private $cache_dir = '../cache';
 
-    public function setTemplate($template) {
+    public function setTemplate(string $template) {
         $this->template = $template;
     }
 
+    /**
+     * @psalm-suppress MissingParamType
+     */
     public function insertBatchData(Array $batch) {
         foreach ($batch as $idx => $val) {
             $this->insertOutputData($idx, $val);
         }
     }
 
-    public function insertOutputData($label, $data)
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    public function insertOutputData(string $label, $data)
     {
         $this->data[$label] = $data;
     }
 
-    public function setTemplateDirectory($directory) {
+    public function setTemplateDirectory(string $directory) {
         $this->template_dir = $directory;
     }
 
-    public function setCacheDirectory($directory) {
+    public function setCacheDirectory(string $directory) {
         $this->cache_dir = $directory;
     }
 

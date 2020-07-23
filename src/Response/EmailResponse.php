@@ -2,6 +2,7 @@
 
 namespace SypherLev\Chassis\Response;
 
+use SypherLev\Chassis\Error\ChassisException;
 
 class EmailResponse
 {
@@ -12,16 +13,22 @@ class EmailResponse
     private $devMode = true;
     private $mailer;
     private $isHTML = true;
+    private $emailfolder = '..'. DIRECTORY_SEPARATOR . 'emails';
 
-    public function __construct()
+    public function __construct(\PHPMailer $mailer = null)
     {
         if(getenv('devmode') === 'false') {
             $this->setDevMode(false);
         }
-        $this->mailer = $mailer = new \PHPMailer();
+        if(!is_null($mailer)) {
+            $this->mailer = $mailer;
+        }
+        else {
+            $this->mailer = new \PHPMailer();
+        }
     }
 
-    public function attachFile($filepath, $name = '')
+    public function attachFile(string $filepath, string $name = '')
     {
         if($name != '') {
             $this->mailer->addAttachment($filepath);
@@ -29,6 +36,10 @@ class EmailResponse
         else {
             $this->mailer->addAttachment($filepath, $name);
         }
+    }
+
+    public function setEmailFolder(string $string) {
+        $this->emailfolder = $string;
     }
 
     public function out()
@@ -45,7 +56,7 @@ class EmailResponse
         }
         if($this->devMode) {
             $timestamp = time();
-            $folder = '..'. DIRECTORY_SEPARATOR . 'emails';
+            $folder = $this->emailfolder;
             if(!file_exists($folder)) {
                 mkdir($folder);
             }
@@ -59,7 +70,7 @@ class EmailResponse
                 file_put_contents($filename, $compiledemail);
             }
             else {
-                throw (new \Exception('Error: can\'t save email output'));
+                throw (new ChassisException('Error: can\'t save email output'));
             }
         }
         else {
@@ -75,11 +86,12 @@ class EmailResponse
             if(!$output) {
                 throw (new \Exception($this->mailer->ErrorInfo));
             }
-            $this->mailer = new \PHPMailer();
+            $mailerclass = get_class($this->mailer);
+            $this->mailer = new $mailerclass;
         }
     }
 
-    public function setEmailParams($emailto, $subject = 'Email Output', $message = '', $emailfrom = '') {
+    public function setEmailParams(string $emailto, string $subject = 'Email Output', string $message = '', string $emailfrom = '') {
         $this->emailto = $emailto;
         $this->emailfrom = $emailfrom;
         $this->message = $message;
@@ -90,7 +102,7 @@ class EmailResponse
         $this->isHTML = false;
     }
 
-    public function setDevMode($switch = true) {
+    public function setDevMode(bool $switch = true) {
         $this->devMode = $switch;
     }
 }

@@ -13,6 +13,9 @@ class CliAction extends AbstractAction
         $this->request = $request;
     }
 
+    /**
+     * @psalm-suppress MissingReturnType
+     */
     public function getRequest()
     {
         return $this->request;

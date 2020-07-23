@@ -9,11 +9,14 @@ class FileResponse implements ResponseInterface
     private $filename;
     private $httpcode = 404;
 
-    public function setHTTPCode($code) {
+    public function setHTTPCode(int $code) {
         $this->httpcode = (int)$code;
     }
 
-    public function insertOutputData($label, $data)
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    public function insertOutputData(string $label, $data)
     {
         $this->filename = $label;
         $this->filepath = $data;
@@ -31,8 +34,8 @@ class FileResponse implements ResponseInterface
         }
     }
 
-    public function setFileTypeHeader($header) {
-        header("Content-type: application/$header");
+    public function setFileTypeHeader(string $header) {
+        header("Content-type: $header");
     }
 
     private function setHeaders() {

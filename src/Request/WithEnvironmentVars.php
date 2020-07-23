@@ -2,6 +2,8 @@
 
 namespace SypherLev\Chassis\Request;
 
+use SypherLev\Chassis\Error\ChassisException;
+
 trait WithEnvironmentVars
 {
     private $env_data;
@@ -10,12 +12,15 @@ trait WithEnvironmentVars
         $this->env_data = getenv();
     }
 
-    public function fromEnvironment($name) {
+    /**
+     * @psalm-suppress MissingReturnType
+     */
+    public function fromEnvironment(string $name) {
         if(isset($this->env_data[$name])) {
             return $this->env_data[$name];
         }
         else {
-            return null;
+            throw new ChassisException("Cannot get parameter ".$name." from environment; parameter not present");
         }
     }
 }

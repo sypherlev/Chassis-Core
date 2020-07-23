@@ -2,6 +2,8 @@
 
 namespace SypherLev\Chassis\Request;
 
+use SypherLev\Chassis\Error\ChassisException;
+
 class Cli
 {
     use WithEnvironmentVars;
@@ -14,19 +16,22 @@ class Cli
         $this->setEnvironmentVars();
     }
 
-    public function getScriptName() {
+    public function getScriptName() : string {
         return $this->getRawData('scriptname');
     }
 
-    public function getAction() {
+    public function getAction() : string {
         return $this->getRawData('action');
     }
 
-    public function getAllLineVars() {
+    public function getAllLineVars() : array {
         return $this->getRawData('argv');
     }
 
-    public function fromLineVars($int) {
+    /**
+     * @psalm-suppress MissingReturnType
+     */
+    public function fromLineVars(int $int) {
         if(count($this->requestdata['argv']) > $int) {
             $count = 0;
             foreach($this->requestdata['argv'] as $value) {
@@ -36,35 +41,52 @@ class Cli
                 $count++;
             }
         }
-        return null;
+        throw new ChassisException("No line var found at position ".$int);
+    }
+
+    /**
+     * @psalm-suppress MissingReturnType
+     */
+    public function fromOpts(string $optname, bool $required = false) {
+        $cli_optname = $optname;
+        if($required) {
+            $cli_optname .= ":";
+        }
+        else {
+            $cli_optname .= "::";
+        }
+        $opts = getopt($cli_optname);
+        if($opts === false && $required) {
+            throw new ChassisException("Required option named $optname not found");
+        }
+        if(isset($opts[$optname])) {
+            return $opts[$optname];
+        }
+        return false;
     }
 
     private function setLineVars() {
         global $argv;
-        if(is_array($argv)) {
-            $scriptname = array_shift($argv);
-            $action = array_shift($argv);
-            $this->insertData('scriptname', $scriptname);
-            $this->insertData('action', $action);
-            $this->insertData('argv', $argv);
-        }
-        else {
-            throw(new \Exception("Can't initialize action: CLI arguments missing"));
-        }
+        $scriptname = array_shift($argv);
+        $action = array_shift($argv);
+        $this->insertData('scriptname', $scriptname);
+        $this->insertData('action', $action);
+        $this->insertData('argv', $argv);
     }
 
-    private function insertData($name, $input)
+    /**
+     * @psalm-suppress MissingParamType
+     */
+    private function insertData(string $name, $input)
     {
         $this->requestdata[$name] = $input;
     }
 
-    private function getRawData($name)
+    /**
+     * @psalm-suppress MissingReturnType
+     */
+    private function getRawData(string $name)
     {
-        if(isset($this->requestdata[$name])) {
-            return $this->requestdata[$name];
-        }
-        else {
-            return null;
-        }
+        return $this->requestdata[$name];
     }
 }
