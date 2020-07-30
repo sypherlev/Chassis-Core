@@ -57,7 +57,10 @@ class Web
         throw new ChassisException("Cannot get placeholder ".$name." from URL; placeholder not present");
     }
 
-    public function fromQuery(string $name) : string
+    /**
+     * @psalm-suppress MissingReturnType
+     */
+    public function fromQuery(string $name)
     {
         if (isset($this->getparams[$name])) {
             return $this->getparams[$name];
