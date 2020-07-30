@@ -73,7 +73,7 @@ class MigrateAction extends CliAction
     public function bootstrap()
     {
         try {
-            $this->migrationhandler->bootstrap($this->getRequest()->fromLineVars(1));
+            $this->migrationhandler->bootstrap($this->getRequest()->fromLineVars(2));
             $this->responder->setOutputMessage('Bootstrap complete');
             $this->responder->out();
         }
@@ -98,7 +98,7 @@ class MigrateAction extends CliAction
     public function createMigration()
     {
         try {
-            $filename = $this->migrationhandler->create($this->database, $this->getRequest()->fromLineVars(1));
+            $filename = $this->migrationhandler->create($this->database, $this->getRequest()->fromLineVars(2));
             $this->responder->setOutputMessage('Migration created: ' . $filename);
             $this->responder->out();
             return;
