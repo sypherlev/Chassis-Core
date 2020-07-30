@@ -73,7 +73,7 @@ class MigrateAction extends CliAction
     public function bootstrap()
     {
         try {
-            $this->migrationhandler->bootstrap($this->getRequest()->fromOpts('b', true));
+            $this->migrationhandler->bootstrap($this->getRequest()->fromLineVars(1));
             $this->responder->setOutputMessage('Bootstrap complete');
             $this->responder->out();
         }
@@ -98,7 +98,7 @@ class MigrateAction extends CliAction
     public function createMigration()
     {
         try {
-            $filename = $this->migrationhandler->create($this->database, $this->getRequest()->fromOpts('n'));
+            $filename = $this->migrationhandler->create($this->database, $this->getRequest()->fromLineVars(1));
             $this->responder->setOutputMessage('Migration created: ' . $filename);
             $this->responder->out();
             return;
@@ -136,7 +136,7 @@ class MigrateAction extends CliAction
 
     private function setupMigrationHandler()
     {
-        $this->database = $this->getRequest()->fromOpts('d', true);
+        $this->database = $this->getRequest()->fromLineVars(1);
         $bootstrapper = new SourceBootstrapper();
         $source = $bootstrapper->generateSource($this->database, $this->pdoclass);
         $query = $bootstrapper->generateQuery($this->database);
@@ -156,9 +156,9 @@ class MigrateAction extends CliAction
         $output = <<<EOT
 CHASSIS FRAMEWORK MIGRATIONS
 
-Usage: bin/chassis [option] [-d <database>] [-n <migration name>] [-b <bootstrap file location>]
+Usage: bin/chassis [option] [<database>] [<migration name>] [<bootstrap file location>]
 
-   create -d <database_prefix> -n <migration name>
+   create <database_prefix> <migration name>
         Create a migration in the migrations folder with the given name (A-Za-z_0-9)
         for the database specified by the prefix from the .env file
         Example: in .env file as follows
@@ -170,11 +170,11 @@ Usage: bin/chassis [option] [-d <database>] [-n <migration name>] [-b <bootstrap
         <database_prefix>_<unix_timestamp>_<migration name>.sql
         The migrations folder is automatically created in the fileroot as specified in .env
 
-   migrate -d <database_prefix> 
+   migrate <database_prefix> 
         Run all unapplied migrations in /migrations on the database specified by the prefix in the .env file
         All .sql files with the corresponding prefix in /migrations will be checked and run if not applied
   
-   bootstrap -d <database_prefix> -b <bootstrap_file_location.sql>
+   bootstrap <database_prefix> <bootstrap_file_location.sql>
         Run a bootstrap file on the database specified by the prefix in the .env file
         This bootstrap file should, at a minimum, create the migrations table
         Example as follows:
@@ -187,7 +187,7 @@ Usage: bin/chassis [option] [-d <database>] [-n <migration name>] [-b <bootstrap
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         
-   backup -d <database prefix>
+   backup <database prefix>
         Create a backup of the database specified by the prefix in the .env file
         Backups are in the format <database prefix>_<Y-m-d--H-i-s>.sql.gz and are stored in /databackups
         The databackups folder is automatically created in the fileroot as specified in .env
