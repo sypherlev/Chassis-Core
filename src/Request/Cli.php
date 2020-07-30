@@ -44,27 +44,6 @@ class Cli
         throw new ChassisException("No line var found at position ".$int);
     }
 
-    /**
-     * @psalm-suppress MissingReturnType
-     */
-    public function fromOpts(string $optname, bool $required = false) {
-        $cli_optname = $optname;
-        if($required) {
-            $cli_optname .= ":";
-        }
-        else {
-            $cli_optname .= "::";
-        }
-        $opts = getopt($cli_optname);
-        if($opts === false && $required) {
-            throw new ChassisException("Required option named $optname not found");
-        }
-        if(isset($opts[$optname])) {
-            return $opts[$optname];
-        }
-        return false;
-    }
-
     private function setLineVars() {
         global $argv;
         $scriptname = array_shift($argv);
