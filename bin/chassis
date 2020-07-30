@@ -1,6 +1,6 @@
 #!/bin/bash
 
 chphpexe=$(which php)
-migrations="$PWD/../public/index.php App\Domain\Migrate\MigrateAction"
+migrations="$PWD/public/index.php App\Domain\Migrate\MigrateAction"
 $chphpexe $migrations $1 $2 $3 $4 $5
 exit $?
