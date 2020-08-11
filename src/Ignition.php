@@ -92,7 +92,8 @@ class Ignition
                 }
             }
             catch (\TypeError $e) {
-                echo "Routing config failure; this route will only respond to command line input";
+                error_log($e->getMessage()." at ".$e->getLine()." in ".$e->getFile());
+                echo "Routing config failure or internal error; please check logs for more information";
                 return;
             }
         }
